@@ -1,17 +1,16 @@
-<div class="game-container" @onclick="_gameManager.StartGame">
+@inject GameManager _gameManager
+
+<div class="game-container" tabindex="0" @onclick="_gameManager.StartGame" @onkeyup="_gameManager.Jump">
     <div class="sky">
-        <div class="bird" style="@_birdCss"></div>
+        <Bird Model="_gameManager.Bird" />
     </div>
     <div class="ground"></div>
+    <Pipe Model="_gameManager.Pipe" />
 </div>
 
 @code {
-    private GameManager _gameManager;
-    private string _birdCss => $"bottom: {_gameManager.Bird.DistanceFromGround}px";
-
     protected override void OnInitialized()
     {
-        _gameManager = new GameManager();
-        _gameManager.PropertyChanged += (o, e) => StateHasChanged();
+        _gameManager.MainLoopCompleted += (o, e) => StateHasChanged();
     }
 }
