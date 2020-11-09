@@ -10,11 +10,28 @@ namespace FlappyBirdDemo.Web.Models
 
         public int Speed { get; private set; } = 2;
 
+        public int Gap { get; private set; } = 130;
+
+        // 300 is the height of the pipe
+        public int GapBottom => DistanceFromBottom + 300;
+        public int GapTop => GapBottom + Gap;
+
         public void Move()
         {
             DistanceFromLeft -= Speed;
         }
 
         public bool IsOffScreen() => DistanceFromLeft <= -60;
+
+        public bool IsCentered()
+        {
+            // (width of game / 2) + (width of bird / 2)
+            var hasEnteredCenter = DistanceFromLeft <= (500 / 2) + (60 / 2);
+
+            // (width of game / 2) - (width of bird / 2) - width of pipe
+            var hasExitedCenter = DistanceFromLeft <= (500 / 2) - (60 / 2) - 60;
+
+            return hasEnteredCenter && !hasExitedCenter;
+        }
     }
 }

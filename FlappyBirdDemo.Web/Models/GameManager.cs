@@ -51,15 +51,27 @@ namespace FlappyBirdDemo.Web.Models
                 Bird.Jump();
         }
 
-        public void GameOver()
-        {
-            IsRunning = false;
-        }
+        public void GameOver() => IsRunning = false;
 
         private void CheckForCollisions()
         {
             if (Bird.IsOnGround())
                 GameOver();
+
+            var centerPipe = Pipes.Where(x => x.IsCentered()).FirstOrDefault();
+            // Check if pipe in middle
+            if (centerPipe != null)
+            {
+                // Check for collision with bottom and top pipe
+                // 150 is the ground height
+                // 45 is height of bird
+                var hasHitBottom = Bird.DistanceFromGround < centerPipe.GapBottom - 150;
+                var hasHitTop = Bird.DistanceFromGround + 45 > centerPipe.GapTop - 150;
+
+                if (hasHitTop || hasHitBottom)
+                    GameOver();
+            }
+
         }
 
         private void MoveObjects()
