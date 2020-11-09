@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FlappyBirdDemo.Web.Models
@@ -12,13 +12,13 @@ namespace FlappyBirdDemo.Web.Models
         public event EventHandler MainLoopCompleted;
 
         public BirdModel Bird { get; private set; }
-        public List<PipeModel> Pipe { get; private set; }
+        public List<PipeModel> Pipes { get; private set; }
         public bool IsRunning { get; private set; } = false;
 
         public GameManager()
         {
             Bird = new BirdModel();
-            Pipe = new PipeModel();
+            Pipes = new List<PipeModel>();
         }
 
         public async Task MainLoop()
@@ -26,11 +26,9 @@ namespace FlappyBirdDemo.Web.Models
             IsRunning = true;
             while (IsRunning)
             {
-                Bird.Fall(_gravity);
-                Pipe.Move();
-
-                if (Bird.DistanceFromGround <= 0)
-                    GameOver();
+                MoveObjects();
+                CheckForCollisions();
+                ManagePipes();
 
                 MainLoopCompleted?.Invoke(this, EventArgs.Empty);
                 await Task.Delay(20);
@@ -55,6 +53,24 @@ namespace FlappyBirdDemo.Web.Models
         public void GameOver()
         {
             IsRunning = false;
+        }
+
+        private void CheckForCollisions()
+        {
+            if (Bird.DistanceFromGround <= 0)
+                GameOver();
+        }
+
+        private void MoveObjects()
+        {
+            Bird.Fall(_gravity);
+            Pipes.ForEach((pipe) => pipe.Move());
+        }
+
+        private void ManagePipes()
+        {
+            if (!Pipes.Any() || Pipes.Last().DistanceFromLeft <= 250)
+                Pipes.Add(new PipeModel());
         }
     }
 }
