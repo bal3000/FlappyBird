@@ -15,5 +15,7 @@ namespace FlappyBirdDemo.Web.Models
             if (DistanceFromGround <= 530)
                 DistanceFromGround += JumpStrength;
         }
+
+        public bool IsOnGround() => DistanceFromGround <= 0;
     }
 }

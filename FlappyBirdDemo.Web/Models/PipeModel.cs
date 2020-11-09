@@ -14,5 +14,7 @@ namespace FlappyBirdDemo.Web.Models
         {
             DistanceFromLeft -= Speed;
         }
+
+        public bool IsOffScreen() => DistanceFromLeft <= -60;
     }
 }
